@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 
 from apps.accounts.urls import accounts_urlpatterns
+from apps.market_api.urls import market_api_urlpatterns
 
 
 urlpatterns = [
@@ -13,4 +14,4 @@ urlpatterns = [
 ]
 
 
-urlpatterns += accounts_urlpatterns
+urlpatterns += accounts_urlpatterns + market_api_urlpatterns
