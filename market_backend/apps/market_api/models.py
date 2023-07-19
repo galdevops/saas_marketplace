@@ -94,3 +94,28 @@ class Bid(models.Model):
 
     def __str__(self):
         return "%s on %s" % (self.amount, self.product.name)
+
+
+class Review(models.Model):
+    buyer = models.ForeignKey(
+        Buyer, 
+        related_name = "bids",
+        on_delete = models.CASCADE
+    )
+    product = models.ForeignKey(
+        Product, 
+        related_name = "bids",
+        on_delete = models.CASCADE
+    )
+    amount = models.DecimalField(
+        decimal_places = 2, 
+        verbose_name="Bid Amount",
+        max_digits = 7)
+    bid_date = models.DateTimeField(auto_now_add=True)
+    accepted = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['amount','bid_date']
+
+    def __str__(self):
+        return "%s on %s" % (self.amount, self.product.name)
