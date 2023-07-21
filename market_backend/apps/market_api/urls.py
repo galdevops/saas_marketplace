@@ -15,12 +15,12 @@ market_api_urlpatterns = [
     # path('status/check', health_check, name="healthcheck")
     path('api/v1/sellers/', SellerListView.as_view(), name="seller_list"),
     path('api/v1/buyers/', BuyerListView.as_view(), name="buyer_list"),
-    path('api/v1/products/', ProductListView.as_view(), name="product_list"),
-    path('api/v1/bids/', BidListView.as_view(), name="bid_list"),
+    # path('api/v1/products/', ProductListView.as_view(), name="product_list"),
+    # path('api/v1/bids/', BidListView.as_view(), name="bid_list"),
     path('api/v1/sellers/<slug:link>/', SellerDetailView.as_view(), name="seller_detail"),
     path('api/v1/buyers/<slug:link>/', BuyerDetailView.as_view(), name="buyer_detail"),
-    path('api/v1/products/<slug:link>/', ProductDetailView.as_view(), name="product_detail"),
-    path('api/v1/bids/<int:pk>/', BidDetailView.as_view(), name="bid_detail"),
+    # path('api/v1/products/<slug:link>/', ProductDetailView.as_view(), name="product_detail"),
+    # path('api/v1/bids/<int:pk>/', BidDetailView.as_view(), name="bid_detail"),
     path('api/v1/root/', market_api_root, name="digisouq_api_root")
     
 ]

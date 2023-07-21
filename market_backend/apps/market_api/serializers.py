@@ -1,7 +1,7 @@
 from rest_framework import serializers
 #Import models to serialize
 from ..accounts.models import User
-from .models import Seller, Buyer, Product, Bid
+from .models import Seller, Buyer, Bid, GigRequest
 
 
 
@@ -46,46 +46,46 @@ class BuyerSerializer(serializers.HyperlinkedModelSerializer):
         model = Buyer 
         fields = ['user','link','bids']
 
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    Serializes the market.Product model various data format. JSON is the default.
-    """
-    seller = serializers.HyperlinkedRelatedField(
-        queryset = Seller.objects.all(),
-        view_name = "market_api:seller_detail",
-        lookup_field = "link",
-    )
-    bids = serializers.HyperlinkedRelatedField(
-        #queryset = Bid.objects.all(),
-        many = True,
-        view_name = "market_api:bid_detail",
-        lookup_field = "pk",
-        read_only = True
-    )
-    link = serializers.SlugField(allow_blank=True, read_only=True)
+# class ProductSerializer(serializers.HyperlinkedModelSerializer):
+#     """
+#     Serializes the market.Product model various data format. JSON is the default.
+#     """
+#     seller = serializers.HyperlinkedRelatedField(
+#         queryset = Seller.objects.all(),
+#         view_name = "market_api:seller_detail",
+#         lookup_field = "link",
+#     )
+#     bids = serializers.HyperlinkedRelatedField(
+#         #queryset = Bid.objects.all(),
+#         many = True,
+#         view_name = "market_api:bid_detail",
+#         lookup_field = "pk",
+#         read_only = True
+#     )
+#     link = serializers.SlugField(allow_blank=True, read_only=True)
 
-    class Meta:
-        model = Product 
-        fields = ['seller','bids','name','desc','quantity','price','link']
+#     class Meta:
+#         model = Product 
+#         fields = ['seller','bids','name','desc','quantity','price','link']
 
-class BidSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    market.Bid model serializer. Returns various data formats. JSON is default.
-    """
-    buyer = serializers.HyperlinkedRelatedField(
-        queryset = Buyer.objects.all(),
-        view_name = "market_api:buyer_detail",
-        lookup_field = "link"
-    )
-    product = serializers.HyperlinkedRelatedField(
-        queryset = Product.objects.all(),
-        view_name = "market_api:product_detail",
-        lookup_field = "link",
-    )
+# class BidSerializer(serializers.HyperlinkedModelSerializer):
+#     """
+#     market.Bid model serializer. Returns various data formats. JSON is default.
+#     """
+#     buyer = serializers.HyperlinkedRelatedField(
+#         queryset = Buyer.objects.all(),
+#         view_name = "market_api:buyer_detail",
+#         lookup_field = "link"
+#     )
+#     gig = serializers.HyperlinkedRelatedField(
+#         queryset = GigRequest.objects.all(),
+#         view_name = "market_api:gigrequest_detail",
+#         lookup_field = "link",
+#     )
 
-    bid_date = serializers.DateTimeField(read_only=True)
-    class Meta:
-        model = Bid
-        fields = ['pk','buyer','product','amount','bid_date','accepted']
+#     bid_date = serializers.DateTimeField(read_only=True)
+#     class Meta:
+#         model = Bid
+#         fields = ['pk','buyer','product','amount','bid_date','accepted']
 
 

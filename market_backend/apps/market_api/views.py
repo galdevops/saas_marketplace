@@ -5,8 +5,8 @@ from rest_framework.reverse import reverse
 
 from django.contrib.auth.models import User 
 #Import the Market app's models and API Serializers
-from .models import Seller, Buyer, Product, Bid
-from .serializers import SellerSerializer, BuyerSerializer, ProductSerializer, BidSerializer
+from .models import Seller, Buyer, Bid
+from .serializers import SellerSerializer, BuyerSerializer
 
 
 #Import the Authentication and Permission classes to control access to certain
@@ -77,72 +77,72 @@ class BuyerDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-class ProductListView(generics.ListCreateAPIView):
-    """
-    Performs GET (all) and POST requests actions on the Product API endpoint.
-    """
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    lookup_field = "link"
-    authentication_classes = [TokenAuthentication]
-    #permission_classes = [IsAuthenticatedOrReadOnly]
+# class ProductListView(generics.ListCreateAPIView):
+#     """
+#     Performs GET (all) and POST requests actions on the Product API endpoint.
+#     """
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     lookup_field = "link"
+#     authentication_classes = [TokenAuthentication]
+#     #permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get_queryset(self):
-        """
-        Conditionally return list of products by the supplied 'seller'
-        query parameter in the URL.
-        """
-        queryset = Product.objects.all()
-        buyer = self.request.query_params.get('buyer', None)
-        seller = self.request.query_params.get('seller', None)
-        if seller:
-            queryset = queryset.filter(seller__link=seller)
-        return queryset
+#     def get_queryset(self):
+#         """
+#         Conditionally return list of products by the supplied 'seller'
+#         query parameter in the URL.
+#         """
+#         queryset = Product.objects.all()
+#         buyer = self.request.query_params.get('buyer', None)
+#         seller = self.request.query_params.get('seller', None)
+#         if seller:
+#             queryset = queryset.filter(seller__link=seller)
+#         return queryset
 
-class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Performs GET, PUT and DELETE requests against a single Product API endpoint
-    """
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    lookup_field = "link"
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-
-class BidListView(generics.ListCreateAPIView):
-    """
-    Makes GET (all) and POST requests against the root Bid API.
-    """
-    queryset = Bid.objects.all()
-    serializer_class = BidSerializer
-    lookup_field = "pk"
-    authentication_classes = [TokenAuthentication]
-    #permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_queryset(self):
-        """
-        Conditionally return a list of Bids by the 'seller' or 'buyer'
-        value in the query params.
-        """
-        queryset = Bid.objects.all()
-        seller = self.request.query_params.get('seller', None)
-        buyer = self.request.query_params.get('buyer', None)
-        if seller:
-            queryset = queryset.filter(product__seller__link=seller)
-        elif buyer:
-            queryset = queryset.filter(buyer__link=buyer)
-        else:
-            queryset = queryset
-        return queryset
+# class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     """
+#     Performs GET, PUT and DELETE requests against a single Product API endpoint
+#     """
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     lookup_field = "link"
+#     authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class BidDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Makes GET, PUT and DELETE requests against a single Bid API endpoint.
-    """
-    queryset = Bid.objects.all()
-    serializer_class = BidSerializer
-    lookup_field = "pk"
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+# class BidListView(generics.ListCreateAPIView):
+#     """
+#     Makes GET (all) and POST requests against the root Bid API.
+#     """
+#     queryset = Bid.objects.all()
+#     serializer_class = BidSerializer
+#     lookup_field = "pk"
+#     authentication_classes = [TokenAuthentication]
+#     #permission_classes = [IsAuthenticatedOrReadOnly]
+
+#     def get_queryset(self):
+#         """
+#         Conditionally return a list of Bids by the 'seller' or 'buyer'
+#         value in the query params.
+#         """
+#         queryset = Bid.objects.all()
+#         seller = self.request.query_params.get('seller', None)
+#         buyer = self.request.query_params.get('buyer', None)
+#         if seller:
+#             queryset = queryset.filter(product__seller__link=seller)
+#         elif buyer:
+#             queryset = queryset.filter(buyer__link=buyer)
+#         else:
+#             queryset = queryset
+#         return queryset
+
+
+# class BidDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     """
+#     Makes GET, PUT and DELETE requests against a single Bid API endpoint.
+#     """
+#     queryset = Bid.objects.all()
+#     serializer_class = BidSerializer
+#     lookup_field = "pk"
+#     authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticatedOrReadOnly]
