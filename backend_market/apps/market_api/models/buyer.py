@@ -15,9 +15,10 @@ class Buyer(models.Model):
     link = models.SlugField(max_length=150, blank=True, unique=True)
 
     def __str__(self):
-        return self.user.username 
+        return self.user.email 
 
     def save(self, *args, **kwargs):
         if not self.link:
-            self.link = slugify(self.user.username)
+            str_email = str(self.user.email).split('@')[0]
+            self.link = slugify(str_email)
         super(Buyer, self).save(*args, **kwargs)

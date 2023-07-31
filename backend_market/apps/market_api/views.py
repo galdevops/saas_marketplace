@@ -2,13 +2,13 @@ from django.http import Http404
 from rest_framework.response import Response 
 from rest_framework import generics 
 from rest_framework.reverse import reverse 
-
-from django.contrib.auth.models import User 
+from django.conf import settings
 #Import the Market app's models and API Serializers
 from .models import Seller, Buyer, Bid
 from .serializers import SellerSerializer, BuyerSerializer
-
-
+from ..accounts.serializers import UserCustomSerializer
+from ..accounts.models import User
+# https://github.com/techbuktu/DigiSouq/blob/master/
 #Import the Authentication and Permission classes to control access to certain
 # API endpoints/data
 from rest_framework.decorators import (api_view, authentication_classes)
@@ -37,6 +37,22 @@ def market_api_root(request, format=None):
     })
 
 
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Performs GET (one), PUT and DELETE operations on the User API.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserCustomSerializer
+    lookup_field = "pk"
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
+
 class SellerListView(generics.ListCreateAPIView):
     """
     Performs GET (all) and POST actions on the SellerSerializer.
@@ -46,6 +62,10 @@ class SellerListView(generics.ListCreateAPIView):
     lookup_field = "link"
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, *args, **kwargs):
+        request.data['user'] = request.user.pk
+        return self.create(request, *args, **kwargs)
 
 class SellerDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -66,6 +86,10 @@ class BuyerListView(generics.ListCreateAPIView):
     lookup_field = "link"
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, *args, **kwargs):
+        request.data['user'] = request.user.pk
+        return self.create(request, *args, **kwargs)
 
 class BuyerDetailView(generics.RetrieveUpdateDestroyAPIView):
     """

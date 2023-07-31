@@ -1,50 +1,26 @@
 from rest_framework import serializers
 #Import models to serialize
-from ..accounts.models import User
-from .models import Seller, Buyer, Bid, GigRequest
+from .models import Seller, Buyer
 
 
 
-class SellerSerializer(serializers.HyperlinkedModelSerializer):
+class SellerSerializer(serializers.ModelSerializer):
     """
     API Serializer for the market.Seller model. Returns JSON as default data format.
     """
-    user = serializers.HyperlinkedRelatedField(
-        queryset = User.objects.all(),
-        view_name = "market_api:user_detail",
-        lookup_field = "pk"
-    )
-    products = serializers.HyperlinkedRelatedField(
-        #queryset = Product.objects.all(),
-        many=True,
-        lookup_field = "link",
-        view_name = "market_api:product_detail",
-        read_only = True
-    )
+
     class Meta:
         model = Seller 
-        fields = ['user','about','link','products']
+        fields = ['user', 'description','skills', 'link']
 
-class BuyerSerializer(serializers.HyperlinkedModelSerializer):
+class BuyerSerializer(serializers.ModelSerializer):
     """
     Serializes the market.Buyer model inot various data formats. JSON is the default.
     """
-    user = serializers.HyperlinkedRelatedField(
-        queryset = User.objects.all(),
-        lookup_field = "pk",
-        view_name = "market_api:user_detail"
-    )
-    bids = serializers.HyperlinkedRelatedField(
-        #queryset = Bid.objects.all(),
-        lookup_field = "pk",
-        view_name = "market_api:bid_detail",
-        many = True,
-        read_only = True
-    )
 
     class Meta:
         model = Buyer 
-        fields = ['user','link','bids']
+        fields = ['user','link']
 
 # class ProductSerializer(serializers.HyperlinkedModelSerializer):
 #     """
