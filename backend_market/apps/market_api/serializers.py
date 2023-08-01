@@ -1,67 +1,59 @@
 from rest_framework import serializers
 #Import models to serialize
-from .models import Seller, Buyer
+from .models import *
 
 
 
 class SellerSerializer(serializers.ModelSerializer):
     """
-    API Serializer for the market.Seller model. Returns JSON as default data format.
+    API Serializer for the market_api.Seller model. Returns JSON as default data format.
     """
 
     class Meta:
         model = Seller 
         fields = ['user', 'description','skills', 'link']
 
+
+
 class BuyerSerializer(serializers.ModelSerializer):
     """
-    Serializes the market.Buyer model inot various data formats. JSON is the default.
+    Serializes the market_api.Buyer model inot various data formats. JSON is the default.
     """
 
     class Meta:
         model = Buyer 
         fields = ['user','link']
 
-# class ProductSerializer(serializers.HyperlinkedModelSerializer):
-#     """
-#     Serializes the market.Product model various data format. JSON is the default.
-#     """
-#     seller = serializers.HyperlinkedRelatedField(
-#         queryset = Seller.objects.all(),
-#         view_name = "market_api:seller_detail",
-#         lookup_field = "link",
-#     )
-#     bids = serializers.HyperlinkedRelatedField(
-#         #queryset = Bid.objects.all(),
-#         many = True,
-#         view_name = "market_api:bid_detail",
-#         lookup_field = "pk",
-#         read_only = True
-#     )
-#     link = serializers.SlugField(allow_blank=True, read_only=True)
 
-#     class Meta:
-#         model = Product 
-#         fields = ['seller','bids','name','desc','quantity','price','link']
 
-# class BidSerializer(serializers.HyperlinkedModelSerializer):
-#     """
-#     market.Bid model serializer. Returns various data formats. JSON is default.
-#     """
-#     buyer = serializers.HyperlinkedRelatedField(
-#         queryset = Buyer.objects.all(),
-#         view_name = "market_api:buyer_detail",
-#         lookup_field = "link"
-#     )
-#     gig = serializers.HyperlinkedRelatedField(
-#         queryset = GigRequest.objects.all(),
-#         view_name = "market_api:gigrequest_detail",
-#         lookup_field = "link",
-#     )
+class GigSerializer(serializers.ModelSerializer):
+    """
+    Serializes the market_api.Gig model inot various data formats. JSON is the default.
+    """
 
-#     bid_date = serializers.DateTimeField(read_only=True)
-#     class Meta:
-#         model = Bid
-#         fields = ['pk','buyer','product','amount','bid_date','accepted']
+    class Meta:
+        model = Gig 
+        fields = ['title','description', 'seller', 'price', 'status', 'link']
+
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    """
+    Serializes the market_api.Order model inot various data formats. JSON is the default.
+    """
+
+    class Meta:
+        model = Order 
+        fields = ['due_date','order_date', 'buyer', 'gig', 'total_cost', 'amount', 'status', 'link']
+
+    
+class ReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializes the market_api.Review model inot various data formats. JSON is the default.
+    """
+
+    class Meta:
+        model = Review 
+        fields = ['delivery_rating', 'expectations_rating', 'needs_rating','public_review', 'seller_rating', 'order']
 
 

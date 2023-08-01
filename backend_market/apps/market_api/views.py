@@ -4,8 +4,8 @@ from rest_framework import generics
 from rest_framework.reverse import reverse 
 from django.conf import settings
 #Import the Market app's models and API Serializers
-from .models import Seller, Buyer, Bid
-from .serializers import SellerSerializer, BuyerSerializer
+from .models import *
+from .serializers import *
 from ..accounts.serializers import UserCustomSerializer
 from ..accounts.models import User
 # https://github.com/techbuktu/DigiSouq/blob/master/
@@ -20,6 +20,7 @@ from rest_framework.permissions import (
 )
 
 from rest_framework import filters
+import datetime
 
 
 @api_view(['GET'])
@@ -67,6 +68,7 @@ class SellerListView(generics.ListCreateAPIView):
         request.data['user'] = request.user.pk
         return self.create(request, *args, **kwargs)
 
+
 class SellerDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     Makes GET (one), PUT and DELETE requests against the Seller API.
@@ -76,6 +78,8 @@ class SellerDetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "link"
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+
 
 class BuyerListView(generics.ListCreateAPIView):
     """
@@ -91,6 +95,8 @@ class BuyerListView(generics.ListCreateAPIView):
         request.data['user'] = request.user.pk
         return self.create(request, *args, **kwargs)
 
+
+
 class BuyerDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     Makes GET, PUT and DELETE requests a single Buyer API endpoint
@@ -101,72 +107,89 @@ class BuyerDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-# class ProductListView(generics.ListCreateAPIView):
+
+
+class GigListView(generics.ListCreateAPIView):
+    """
+    Performs GET (all) and POST actions on the SellerSerializer.
+    """
+    queryset = Gig.objects.all()
+    serializer_class = GigSerializer
+    lookup_field = "link"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, *args, **kwargs):
+        seller, created = Seller.objects.get_or_create(user=request.user)
+        request.data['seller'] = seller.id
+        return self.create(request, *args, **kwargs)
+
+
+class GigDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Makes GET, PUT and DELETE requests a single Buyer API endpoint
+    """
+    queryset = Gig.objects.all()
+    serializer_class = GigSerializer
+    lookup_field = "link"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+
+class OrderListView(generics.ListCreateAPIView):
+    """
+    Performs GET (all) and POST actions on the SellerSerializer.
+    """
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    lookup_field = "link"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, *args, **kwargs):
+        buyer, created = Buyer.objects.get_or_create(user=request.user)
+        giged = Gig.objects.get(link=request.data['gig'])
+        request.data['gig'] = giged.id
+        request.data['total_cost'] =  request.data['amount'] * giged.delivery_time
+        request.data['due_date'] =  datetime.datetime.now() + datetime.timedelta(days=giged.delivery_time)
+        request.data['buyer'] = buyer.id
+        return self.create(request, *args, **kwargs)
+
+
+class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Makes GET, PUT and DELETE requests a single Buyer API endpoint
+    """
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    lookup_field = "link"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+
+
+class ReviewListView(generics.ListCreateAPIView):
+    """
+    Performs GET (all) and POST actions on the SellerSerializer.
+    """
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    lookup_field = "link"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, *args, **kwargs):
+        request.data['order'] = Order.objects.get(link='1690907620galdevops').id
+        return self.create(request, *args, **kwargs)
+
+
+# class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
 #     """
-#     Performs GET (all) and POST requests actions on the Product API endpoint.
+#     Makes GET, PUT and DELETE requests a single Buyer API endpoint
 #     """
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewSerializer
 #     lookup_field = "link"
-#     authentication_classes = [TokenAuthentication]
-#     #permission_classes = [IsAuthenticatedOrReadOnly]
-
-#     def get_queryset(self):
-#         """
-#         Conditionally return list of products by the supplied 'seller'
-#         query parameter in the URL.
-#         """
-#         queryset = Product.objects.all()
-#         buyer = self.request.query_params.get('buyer', None)
-#         seller = self.request.query_params.get('seller', None)
-#         if seller:
-#             queryset = queryset.filter(seller__link=seller)
-#         return queryset
-
-# class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     """
-#     Performs GET, PUT and DELETE requests against a single Product API endpoint
-#     """
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-#     lookup_field = "link"
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsAuthenticatedOrReadOnly]
-
-
-# class BidListView(generics.ListCreateAPIView):
-#     """
-#     Makes GET (all) and POST requests against the root Bid API.
-#     """
-#     queryset = Bid.objects.all()
-#     serializer_class = BidSerializer
-#     lookup_field = "pk"
-#     authentication_classes = [TokenAuthentication]
-#     #permission_classes = [IsAuthenticatedOrReadOnly]
-
-#     def get_queryset(self):
-#         """
-#         Conditionally return a list of Bids by the 'seller' or 'buyer'
-#         value in the query params.
-#         """
-#         queryset = Bid.objects.all()
-#         seller = self.request.query_params.get('seller', None)
-#         buyer = self.request.query_params.get('buyer', None)
-#         if seller:
-#             queryset = queryset.filter(product__seller__link=seller)
-#         elif buyer:
-#             queryset = queryset.filter(buyer__link=buyer)
-#         else:
-#             queryset = queryset
-#         return queryset
-
-
-# class BidDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     """
-#     Makes GET, PUT and DELETE requests against a single Bid API endpoint.
-#     """
-#     queryset = Bid.objects.all()
-#     serializer_class = BidSerializer
-#     lookup_field = "pk"
 #     authentication_classes = [TokenAuthentication]
 #     permission_classes = [IsAuthenticatedOrReadOnly]
